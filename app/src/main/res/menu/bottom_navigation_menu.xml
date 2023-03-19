@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/id_maps"
+        android:icon="@drawable/icon_google"
+        android:enabled="true"
+        android:title="@string/mapsFragment"
+        />
+    <item
+        android:id="@+id/id_weather"
+        android:icon="@drawable/icon_forecast"
+        android:enabled="true"
+        android:title="@string/weather"
+        />
+
+
+</menu>
