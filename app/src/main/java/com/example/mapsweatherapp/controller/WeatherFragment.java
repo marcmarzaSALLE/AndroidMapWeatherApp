@@ -35,11 +35,11 @@ import java.util.Map;
 public class WeatherFragment extends Fragment {
     private Manager manager;
     private ArrayList<Ubication> ubications;
-    private ArrayList<WeatherUbication> weatherUbications;
+    private ArrayList<WeatherUbication> weatherUbications, weatherUbicationsAux;
     private RequestQueue requestQueue;
     Spinner spinner;
-    TextView txtName, txtWeatherGrades, txtWind, txtHumidity,txtDescription,txtMaxMinTemp,txtWindText,txtHumidityText;
-    ImageView imgWeather,imgWind,imgHumidity;
+    TextView txtName, txtWeatherGrades, txtWind, txtHumidity, txtDescription, txtMaxMinTemp, txtWindText, txtHumidityText;
+    ImageView imgWeather, imgWind, imgHumidity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class WeatherFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 viewFragment.setVisibility(View.VISIBLE);
-                addDataWidgets(position,viewFragment);
+                addDataWidgets(position, viewFragment);
             }
 
             @Override
@@ -83,6 +83,7 @@ public class WeatherFragment extends Fragment {
         imgWind = view.findViewById(R.id.imgViewWind);
         imgHumidity = view.findViewById(R.id.imgViewHumidity);
         weatherUbications = new ArrayList<>();
+        weatherUbicationsAux = new ArrayList<>();
     }
 
     private void getLocations() {
@@ -90,15 +91,16 @@ public class WeatherFragment extends Fragment {
     }
 
 
-
     private void addDataWeatherUbications() {
         for (int i = 0; i < ubications.size(); i++) {
             String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + ubications.get(i).getLatitude() + "&lon=" + ubications.get(i).getLongitude() + "&appid=de46ba611be3cefe2486a2d32d4a89f5&units=metric";
-            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
+            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
                         String name = response.getString("name");
+                        double lat = response.getJSONObject("coord").getDouble("lat");
+                        double lon = response.getJSONObject("coord").getDouble("lon");
                         String weather = response.getJSONArray("weather").getJSONObject(0).getString("main");
                         String description = response.getJSONArray("weather").getJSONObject(0).getString("description");
                         double temp = response.getJSONObject("main").getDouble("temp");
@@ -106,9 +108,8 @@ public class WeatherFragment extends Fragment {
                         double speedWind = response.getJSONObject("wind").getDouble("speed");
                         int maxTemp = response.getJSONObject("main").getInt("temp_max");
                         int minTemp = response.getJSONObject("main").getInt("temp_min");
-
                         //AGafar vent, graus, humitat
-                        WeatherFragment.this.addWeatherUbicationObject(new WeatherUbication(name, weather, description, temp,humidity,speedWind,maxTemp,minTemp));
+                        WeatherFragment.this.addWeatherUbicationObject(new WeatherUbication(name, lon, lat, weather, description, temp, humidity, speedWind, maxTemp, minTemp));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -127,8 +128,9 @@ public class WeatherFragment extends Fragment {
     }
 
     public void addWeatherUbicationObject(WeatherUbication weatherUbication) {
-        weatherUbications.add(weatherUbication);
-        if (weatherUbications.size() == ubications.size()) {
+        weatherUbicationsAux.add(weatherUbication);
+        if (weatherUbicationsAux.size() == ubications.size()) {
+            weatherUbications = sortWeatherUbications();
             addDataSpinner();
         }
     }
@@ -143,27 +145,27 @@ public class WeatherFragment extends Fragment {
         spinner.setAdapter(adapter);
     }
 
-    private void addDataWidgets(int position, View viewFragment){
+    private void addDataWidgets(int position, View viewFragment) {
         txtName.setText(weatherUbications.get(position).getName());
-        txtDescription.setText(weatherUbications.get(position).getDescription());
+        txtDescription.setText(weatherUbications.get(position).getDescription().toUpperCase());
         txtWind.setText(weatherUbications.get(position).getWindSpeed() + " m/s");
         txtWeatherGrades.setText(Math.round(weatherUbications.get(position).getTemp()) + "°C");
         txtHumidity.setText(weatherUbications.get(position).getHumidity() + "%");
         txtMaxMinTemp.setText(weatherUbications.get(position).getMaxTemp() + "°/" + weatherUbications.get(position).getMinTemp() + "°");
 
-        Map<String,Integer> hashMap = manager.getDataMapIcon();
+        Map<String, Integer> hashMap = manager.getDataMapIcon();
         imgWeather.setImageResource(hashMap.get(weatherUbications.get(position).getDescription()));
-        Map<String,Integer>hashMapColor = manager.getColorWeather();
+        Map<String, Integer> hashMapColor = manager.getColorWeather();
         viewFragment.setBackgroundResource(hashMapColor.get(weatherUbications.get(position).getDescription()));
-        spinner.setPopupBackgroundDrawable(ContextCompat.getDrawable(requireContext(),hashMapColor.get(weatherUbications.get(position).getDescription())));
-        if(hashMapColor.get(weatherUbications.get(position).getDescription()) == R.drawable.color_thunderstorm || hashMapColor.get(weatherUbications.get(position).getDescription()) == R.drawable.color_rain){
+        spinner.setPopupBackgroundDrawable(ContextCompat.getDrawable(requireContext(), hashMapColor.get(weatherUbications.get(position).getDescription())));
+        if (hashMapColor.get(weatherUbications.get(position).getDescription()) == R.drawable.color_thunderstorm || hashMapColor.get(weatherUbications.get(position).getDescription()) == R.drawable.color_rain) {
             setColorWhiteWidget();
-        }else{
+        } else {
             setColorBlackWidget();
         }
     }
 
-    private void setColorWhiteWidget(){
+    private void setColorWhiteWidget() {
         txtName.setTextColor(Color.WHITE);
         txtWind.setTextColor(Color.WHITE);
         txtWeatherGrades.setTextColor(Color.WHITE);
@@ -175,7 +177,8 @@ public class WeatherFragment extends Fragment {
         imgHumidity.setImageResource(R.drawable.icon_humidity_white);
         imgWind.setImageResource(R.drawable.icon_wind_white);
     }
-    private void setColorBlackWidget(){
+
+    private void setColorBlackWidget() {
         txtName.setTextColor(Color.BLACK);
         txtWind.setTextColor(Color.BLACK);
         txtWeatherGrades.setTextColor(Color.BLACK);
@@ -188,5 +191,22 @@ public class WeatherFragment extends Fragment {
         imgWind.setImageResource(R.drawable.wind_icon);
     }
 
+    private ArrayList<WeatherUbication> sortWeatherUbications() {
+        ArrayList<WeatherUbication> weather = new ArrayList<>();
+        for (int i = 0; i < ubications.size(); i++) {
+            for (int j = 0; j < weatherUbicationsAux.size(); j++) {
+
+                double latUbication = (double)Math.round(ubications.get(i).getLatitude()*1000)/1000;
+                double lonUbication = (double)Math.round(ubications.get(i).getLongitude()*1000)/1000;
+                double latWeather =(double)Math.round(weatherUbicationsAux.get(j).getLat()*1000)/1000;
+                double lonWeather =(double)Math.round(weatherUbicationsAux.get(j).getLon()*1000)/1000;
+                Log.wtf("LAT", ubications.get(i).getLatitude() + " " + weatherUbicationsAux.get(j).getLat());
+                if(latUbication == latWeather && lonUbication == lonWeather) {
+                    weather.add(weatherUbicationsAux.get(j));
+                }
+            }
+        }
+        return weather;
+    }
 
 }

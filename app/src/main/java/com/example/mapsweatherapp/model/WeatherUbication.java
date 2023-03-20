@@ -7,14 +7,17 @@ public class WeatherUbication {
     double temp;
 
     int humidity;
-
+    double lat;
+    double lon;
     double windSpeed;
     int maxTemp;
     int minTemp;
 
 
-    public WeatherUbication(String name, String weather, String description, double temp, int humidity, double windSpeed, int maxTemp, int minTemp) {
+    public WeatherUbication(String name,double lon,double lat ,String weather, String description, double temp, int humidity, double windSpeed, int maxTemp, int minTemp) {
         this.name = name;
+        this.lon = lon;
+        this.lat = lat;
         this.weather = weather;
         this.description = description;
         this.temp = temp;
@@ -22,6 +25,14 @@ public class WeatherUbication {
         this.windSpeed = windSpeed;
         this.maxTemp = maxTemp;
         this.minTemp = minTemp;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
     }
 
     public int getMaxTemp() {
