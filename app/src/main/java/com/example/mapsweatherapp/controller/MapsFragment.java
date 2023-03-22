@@ -64,6 +64,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     longitude = location.getLongitude();
                     String nameCity = getCityByLatLong(latitude, longitude);
                     savaCitySharedPreferences(nameCity,latitude,longitude);
+                    saveCurrentLocationSharedPreferences(nameCity,latitude,longitude);
                     onMapReady(googleMap);
                     Log.wtf("MapsFragment", "Latitude: " + latitude + " Longitude: " + longitude);
                 } else {
@@ -167,6 +168,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private void savaCitySharedPreferences(String name, double latitude, double longitude){
         Ubication ubication = new Ubication(name, latitude, longitude);
         this.manager.saveDataSharedPreferences(requireContext(), ubication);
+    }
+    private void saveCurrentLocationSharedPreferences(String name, double latitude, double longitude){
+        Ubication ubication = new Ubication(name, latitude, longitude);
+        this.manager.saveDataSharedPreferencesCurrentUbication(requireContext(), ubication);
     }
 
 }

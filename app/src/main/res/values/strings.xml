@@ -2,8 +2,12 @@
     <string name="app_name">MapsWeatherApp</string>
     <string name="mapsFragment">Maps</string>
     <string name="weather">Weather</string>
+    <string name="weather_location">Location</string>
+    <string name="forecastDays">Forecast 3 days</string>
+    <string name="forecastCurrent">Next hours forecast</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_location">Search country or capital</string>
     <string name="btnSearch">Search</string>
+    <string name="icon">Icon</string>
 </resources>

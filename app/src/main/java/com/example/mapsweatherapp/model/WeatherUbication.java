@@ -1,66 +1,47 @@
 package com.example.mapsweatherapp.model;
 
+import java.util.ArrayList;
+
 public class WeatherUbication {
-    String name;
-    String weather;
-    String description;
-    double temp;
+    private String name;
+    private String main;
+    private double temp;
+    private double maxTemp;
+    private double minTemp;
 
-    int humidity;
-    double lat;
-    double lon;
-    double windSpeed;
-    int maxTemp;
-    int minTemp;
+    private ArrayList<WeatherForecast> weatherForecasts = new ArrayList<>();
 
 
-    public WeatherUbication(String name,double lon,double lat ,String weather, String description, double temp, int humidity, double windSpeed, int maxTemp, int minTemp) {
+    public WeatherUbication(String name, String main, double temp, double maxTemp, double minTemp, ArrayList<WeatherForecast> weatherForecasts) {
         this.name = name;
-        this.lon = lon;
-        this.lat = lat;
-        this.weather = weather;
-        this.description = description;
+        this.main = main;
         this.temp = temp;
-        this.humidity = humidity;
-        this.windSpeed = windSpeed;
         this.maxTemp = maxTemp;
         this.minTemp = minTemp;
+        this.weatherForecasts = weatherForecasts;
     }
 
-    public double getLat() {
-        return lat;
+    public ArrayList<WeatherForecast> getWeatherForecasts() {
+        return weatherForecasts;
     }
 
-    public double getLon() {
-        return lon;
-    }
 
-    public int getMaxTemp() {
+    public double getMaxTemp() {
         return maxTemp;
     }
 
-    public int getMinTemp() {
+    public double getMinTemp() {
         return minTemp;
     }
 
-    public int getHumidity() {
-        return humidity;
-    }
-
-    public double getWindSpeed() {
-        return windSpeed;
-    }
 
     public String getName() {
         return name;
     }
 
-    public String getWeather() {
-        return weather;
-    }
 
-    public String getDescription() {
-        return description;
+    public String getMain() {
+        return main;
     }
 
     public double getTemp() {
